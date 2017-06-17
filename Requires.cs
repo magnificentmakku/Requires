@@ -1,41 +1,46 @@
 namespace Requires
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq.Expressions;
     using System.Reflection;
 
     public static class Requires
     {
-        public static NameValueCombinationContinuation<int> AndLessThan(this NameValueCombinationContinuation<int> nameIntValueCombination, Expression<Func<int>> compareValueExpression)
+        public static NameValueCombinationContinuation<T> AndLessThan<T>(this NameValueCombinationContinuation<T> nameValueCombination, Expression<Func<T>> compareValueExpression)
         {
-            if (nameIntValueCombination == null)
-                throw new ArgumentNullException("nameIntValueCombination");
+            if (nameValueCombination == null)
+                throw new ArgumentNullException("nameValueCombination");
             if (compareValueExpression == null)
                 throw new ArgumentNullException("compareValueExpression");
 
             var compareName = GetName(compareValueExpression);
             var compareValue = GetValue(compareValueExpression);
 
-            if (!(nameIntValueCombination.Value < compareValue))
-                throw new ArgumentOutOfRangeException(nameIntValueCombination.Name, nameIntValueCombination.Value, string.Format("\"{0}\" (actual value: {1}) must be less than \"{2}\" (actual value: {3}).", nameIntValueCombination.Name, nameIntValueCombination.Value, compareName, compareValue));
+            var comparer = Comparer<T>.Default;
 
-            return new NameValueCombinationContinuation<int>(nameIntValueCombination.Name, nameIntValueCombination.Value);
+            if (!(comparer.Compare(nameValueCombination.Value, compareValue) < 0))
+                throw new ArgumentOutOfRangeException(nameValueCombination.Name, nameValueCombination.Value, string.Format("\"{0}\" (actual value: {1}) must be less than \"{2}\" (actual value: {3}).", nameValueCombination.Name, nameValueCombination.Value, compareName, compareValue));
+            
+            return new NameValueCombinationContinuation<T>(nameValueCombination.Name, nameValueCombination.Value);
         }
 
-        public static NameValueCombinationContinuation<int> GreaterThan(this NameValueCombinationInitial<int> nameIntValueCombination, Expression<Func<int>> compareValueExpression)
+        public static NameValueCombinationContinuation<T> GreaterThan<T>(this NameValueCombinationInitial<T> nameValueCombination, Expression<Func<T>> compareValueExpression)
         {
-            if (nameIntValueCombination == null)
-                throw new ArgumentNullException("nameIntValueCombination");
+            if (nameValueCombination == null)
+                throw new ArgumentNullException("nameValueCombination");
             if (compareValueExpression == null)
                 throw new ArgumentNullException("compareValueExpression");
 
             var compareName = GetName(compareValueExpression);
             var compareValue = GetValue(compareValueExpression);
 
-            if (!(nameIntValueCombination.Value > compareValue))
-                throw new ArgumentOutOfRangeException(nameIntValueCombination.Name, nameIntValueCombination.Value, string.Format("\"{0}\" (actual value: {1}) must be greater than \"{2}\" (actual value: {3}).", nameIntValueCombination.Name, nameIntValueCombination.Value, compareName, compareValue));
+            var comparer = Comparer<T>.Default;
 
-            return new NameValueCombinationContinuation<int>(nameIntValueCombination.Name, nameIntValueCombination.Value);
+            if (!(comparer.Compare(nameValueCombination.Value, compareValue) > 0))
+                throw new ArgumentOutOfRangeException(nameValueCombination.Name, nameValueCombination.Value, string.Format("\"{0}\" (actual value: {1}) must be greater than \"{2}\" (actual value: {3}).", nameValueCombination.Name, nameValueCombination.Value, compareName, compareValue));
+
+            return new NameValueCombinationContinuation<T>(nameValueCombination.Name, nameValueCombination.Value);
         }
 
         public static void NotNull<T>(Expression<Func<T>> valueExpression)

@@ -21,15 +21,15 @@
                 Console.WriteLine(string.Format("Requires.NotNull(...) threw ArgumentNullException.\nMessage: {0}\nParamName: {1}", ex.Message, ex.ParamName));
             }
 
-            Action<int, int> requiresGreaterThan = (int x, int y) =>
+            Action<double, double> requiresGreaterThan = (double x, double y) =>
             {
                 Requires.Require(() => x).GreaterThan(() => y);
             };
 
-            requiresGreaterThan(3, 2);
+            requiresGreaterThan(3.14, 0.0);
             try
             {
-                requiresGreaterThan(3, 42);
+                requiresGreaterThan(3.14, 42.0);
             }
             catch (ArgumentOutOfRangeException ex)
             {
