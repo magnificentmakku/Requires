@@ -7,7 +7,7 @@ Typical null guard:
 ```csharp
 public void Method(object theObject)
 {
-    if (str == null)
+    if (theObject == null)
         throw new ArgumentNullException("theObject");
     
     // ...
